@@ -1,3 +1,4 @@
+import { transitions } from "polished";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { api } from "../Services/api"
 
@@ -12,12 +13,15 @@ interface Transaction{
 
 type TransactionInput = Omit<Transaction, "id"|"createdAt">;
 
+
 interface TransactionProviderProps{
     children: ReactNode;
 }
 interface TransactionsContextData{
     transactions: Transaction[];
     createTransaction: (transaction: TransactionInput) => Promise<void>;
+    removeTransaction: (transactionId: number) => Promise<void>;
+
 }
 
  const TransactionsContext = createContext<TransactionsContextData>(
@@ -44,8 +48,17 @@ export function TransactionProvider({children}: TransactionProviderProps){
         transaction,
     ])
   }
+ async function removeTransaction (transactionId: number){
+  const updatedtrans = [...transactions]
+  const transIndex = updatedtrans.findIndex((transaction) => transaction.id === transactionId)
+
+  if(transIndex >= 0){
+   updatedtrans.splice(transIndex, 1)
+   setTransaction(updatedtrans)
+  }
+}
   return(
-    <TransactionsContext.Provider value={{transactions, createTransaction}}>
+    <TransactionsContext.Provider value={{transactions, createTransaction, removeTransaction}}>
    {children}
     </TransactionsContext.Provider>
   )

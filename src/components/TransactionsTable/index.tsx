@@ -7,8 +7,11 @@ import { transcode } from "buffer";
 
 export function TransactionTable(){
   const {transactions} = useTransactions()
+  const {removeTransaction} = useTransactions()
 
-
+function DeleteTransaction(transactionId: number){
+  removeTransaction(transactionId)
+}
   return(
        <Container>
         <table>
@@ -35,6 +38,9 @@ export function TransactionTable(){
             <td>              
               {new Intl.DateTimeFormat("pt-BR",{
               }).format(new Date(transaction.createdAt))}
+            </td>
+            <td>
+             <button className="trash" onClick={()=>DeleteTransaction(transaction.id)}><img src={Lixeira}/></button>
             </td>
           </tr>
           );
